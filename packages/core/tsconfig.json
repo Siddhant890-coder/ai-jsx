@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@ai-jsx/core",
+    "paths": {
+      "@ai-jsx/core/jsx-runtime": ["./jsx-runtime.js"],
+      "@ai-jsx/core/jsx-dev-runtime": ["./jsx-dev-runtime.js"]
+    },
+    "customConditions": ["@ai-jsx/source"]
+  }
+}

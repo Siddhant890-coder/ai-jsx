@@ -1,0 +1,68 @@
+{
+  "name": "@ai-jsx/legacy",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/commonjs/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "@ai-jsx/source": "./src/index.ts",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tshy",
+    "prepare": "tshy",
+    "test": "vitest --coverage --watch=false",
+    "typecheck": "tsc --noEmit",
+    "check-external-types": "npx @arethetypeswrong/cli -P"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@ai-jsx/openai": "workspace:^",
+    "@ai-jsx/shrinkable": "workspace:^",
+    "@tsconfig/node18": "^18.2.4"
+  },
+  "typesVersions": {
+    "*": {
+      "dist/commonjs/index.d.ts": [
+        "dist/commonjs/index.d.ts"
+      ],
+      "*": [
+        "dist/commonjs/*"
+      ]
+    }
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    },
+    "exclude": [
+      "src/**/*.test.ts*"
+    ],
+    "sourceDialects": [
+      "@ai-jsx/source"
+    ]
+  },
+  "module": "./dist/esm/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "peerDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@ai-jsx/openai": "workspace:^",
+    "@ai-jsx/shrinkable": "workspace:^"
+  },
+  "dependencies": {
+    "@types/json-schema": "^7.0.15"
+  }
+}

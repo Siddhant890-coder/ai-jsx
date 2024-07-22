@@ -1,0 +1,97 @@
+{
+  "name": "@ai-jsx/react",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/commonjs/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "@ai-jsx/source": "./src/index.tsx",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./jsx-runtime": {
+      "import": {
+        "@ai-jsx/source": "./src/jsx-runtime.ts",
+        "types": "./dist/esm/jsx-runtime.d.ts",
+        "default": "./dist/esm/jsx-runtime.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/jsx-runtime.d.ts",
+        "default": "./dist/commonjs/jsx-runtime.js"
+      }
+    },
+    "./jsx-dev-runtime": {
+      "import": {
+        "@ai-jsx/source": "./src/jsx-dev-runtime.ts",
+        "types": "./dist/esm/jsx-dev-runtime.d.ts",
+        "default": "./dist/esm/jsx-dev-runtime.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/jsx-dev-runtime.d.ts",
+        "default": "./dist/commonjs/jsx-dev-runtime.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tshy",
+    "prepare": "tshy",
+    "test": "vitest --coverage --watch=false",
+    "typecheck": "tsc --noEmit",
+    "check-external-types": "npx @arethetypeswrong/cli -P"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^18.19.39",
+    "@types/react": "^18.0.0",
+    "ink": "^5.0.1",
+    "ink-testing-library": "^4.0.0",
+    "react": "^18.0.0"
+  },
+  "typesVersions": {
+    "*": {
+      "dist/commonjs/index.d.ts": [
+        "dist/commonjs/index.d.ts"
+      ],
+      "*": [
+        "dist/commonjs/*"
+      ]
+    }
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.tsx",
+      "./jsx-runtime": "./src/jsx-runtime.ts",
+      "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts"
+    },
+    "exclude": [
+      "src/**/*.test.ts*"
+    ],
+    "sourceDialects": [
+      "@ai-jsx/source"
+    ]
+  },
+  "module": "./dist/esm/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "peerDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
+  }
+}

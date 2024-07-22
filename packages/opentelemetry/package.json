@@ -1,0 +1,67 @@
+{
+  "name": "@ai-jsx/opentelemetry",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/commonjs/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "@ai-jsx/source": "./src/index.tsx",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tshy",
+    "prepare": "tshy",
+    "test": "vitest --coverage --watch=false",
+    "typecheck": "tsc --noEmit",
+    "check-external-types": "npx @arethetypeswrong/cli -P"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@opentelemetry/api": "^1.0.0",
+    "@opentelemetry/api-logs": "^0.52.1",
+    "@opentelemetry/sdk-node": "^0.52.1",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^18.19.39"
+  },
+  "typesVersions": {
+    "*": {
+      "dist/commonjs/index.d.ts": [
+        "dist/commonjs/index.d.ts"
+      ],
+      "*": [
+        "dist/commonjs/*"
+      ]
+    }
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.tsx"
+    },
+    "exclude": [
+      "src/**/*.test.ts*"
+    ],
+    "sourceDialects": [
+      "@ai-jsx/source"
+    ]
+  },
+  "module": "./dist/esm/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "peerDependencies": {
+    "@ai-jsx/core": "workspace:^",
+    "@opentelemetry/api": "^1.0.0",
+    "@opentelemetry/api-logs": "^0.52.1"
+  }
+}

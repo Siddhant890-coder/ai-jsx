@@ -1,0 +1,109 @@
+{
+  "name": "@ai-jsx/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/commonjs/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "@ai-jsx/source": "./src/index.ts",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./jsx-runtime": {
+      "import": {
+        "@ai-jsx/source": "./src/jsx-runtime.ts",
+        "types": "./dist/esm/jsx-runtime.d.ts",
+        "default": "./dist/esm/jsx-runtime.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/jsx-runtime.d.ts",
+        "default": "./dist/commonjs/jsx-runtime.js"
+      }
+    },
+    "./jsx-dev-runtime": {
+      "import": {
+        "@ai-jsx/source": "./src/jsx-dev-runtime.ts",
+        "types": "./dist/esm/jsx-dev-runtime.d.ts",
+        "default": "./dist/esm/jsx-dev-runtime.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/jsx-dev-runtime.d.ts",
+        "default": "./dist/commonjs/jsx-dev-runtime.js"
+      }
+    },
+    "./chat": {
+      "import": {
+        "@ai-jsx/source": "./src/chat.tsx",
+        "types": "./dist/esm/chat.d.ts",
+        "default": "./dist/esm/chat.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/chat.d.ts",
+        "default": "./dist/commonjs/chat.js"
+      }
+    },
+    "./tokenizer": {
+      "import": {
+        "@ai-jsx/source": "./src/tokenizer.ts",
+        "types": "./dist/esm/tokenizer.d.ts",
+        "default": "./dist/esm/tokenizer.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/tokenizer.d.ts",
+        "default": "./dist/commonjs/tokenizer.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tshy",
+    "prepare": "tshy",
+    "test": "vitest --coverage --watch=false",
+    "typecheck": "tsc --noEmit",
+    "check-external-types": "npx @arethetypeswrong/cli -P"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@types/json-schema": "^7.0.15"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^18.19.39"
+  },
+  "typesVersions": {
+    "*": {
+      "dist/commonjs/index.d.ts": [
+        "dist/commonjs/index.d.ts"
+      ],
+      "*": [
+        "dist/commonjs/*"
+      ]
+    }
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts",
+      "./jsx-runtime": "./src/jsx-runtime.ts",
+      "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
+      "./chat": "./src/chat.tsx",
+      "./tokenizer": "./src/tokenizer.ts"
+    },
+    "exclude": [
+      "src/**/*.test.ts*"
+    ],
+    "sourceDialects": [
+      "@ai-jsx/source"
+    ]
+  },
+  "module": "./dist/esm/index.js",
+  "types": "./dist/commonjs/index.d.ts"
+}
