@@ -99,7 +99,7 @@ export function ShrinkConversation(
     const applyReplacements = (element: RenderElement, currentTrie: ReplacementTrie): RenderElement => {
       const replacement = currentTrie.replacements.get(element);
       if (replacement) {
-        return replacement;
+        return applyReplacements(replacement, currentTrie);
       }
 
       const nextTrie = currentTrie.next.get(element);

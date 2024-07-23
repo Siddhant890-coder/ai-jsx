@@ -78,3 +78,37 @@ test('ShrinkConversation works inside chat components', async () => {
     .untilComplete();
   expect(node.toString()).toBe('Hello, replaced!');
 });
+
+test('ShrinkConversation handles multiple rounds of replacements', async () => {
+  const renderContext = createRenderContext();
+  const node = await renderContext
+    .render(
+      <Tokenizer.Provider value={(n) => n.toString().length}>
+        <ShrinkConversation maximumLength={10}>
+          <user>
+            This is{' '}
+            <Shrinkable
+              importance={0}
+              replacement={
+                <Shrinkable
+                  importance={0}
+                  replacement={
+                    <>
+                      <Shrinkable importance={0}>pretty </Shrinkable>short.
+                    </>
+                  }
+                >
+                  medium length.
+                </Shrinkable>
+              }
+            >
+              very very long.
+            </Shrinkable>
+          </user>
+        </ShrinkConversation>
+      </Tokenizer.Provider>,
+    )
+    .untilComplete();
+
+  expect(node.toString()).toBe('This is short.');
+});
