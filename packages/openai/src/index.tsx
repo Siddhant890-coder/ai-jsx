@@ -192,9 +192,11 @@ function coalesceToolCallMessages(
   for (const message of messages) {
     if (message.role === 'assistant' && message.tool_calls && message.content === '') {
       const lastMessage = mergedMessages.at(-1);
-      if (lastMessage?.role === 'assistant' && lastMessage.tool_calls) {
+      if (lastMessage?.role === 'assistant') {
         // Merge with the last message.
+        lastMessage.tool_calls = lastMessage.tool_calls ?? [];
         lastMessage.tool_calls.push(...message.tool_calls);
+        continue;
       }
     }
     mergedMessages.push(message);

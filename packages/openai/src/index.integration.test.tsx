@@ -1,7 +1,7 @@
 import { isChatElement } from '@ai-jsx/core/chat';
 import { OpenAIChatModel } from './index.js';
 import { it, expect } from 'vitest';
-import { createRenderContext } from '@ai-jsx/core';
+import { AINode, createRenderContext, RenderElement, RenderNode } from '@ai-jsx/core';
 
 it('streams a simple chat completion', async () => {
   const ctx = createRenderContext();
@@ -101,6 +101,75 @@ it('handles function synthesis', async () => {
 
   expect(messages).toBe(1);
   expect(accumulated).toMatch(result.toString());
+});
+
+it('handles multiple concurrent function calls', async () => {
+  const ctx = createRenderContext();
+  const prompt = (
+    <>
+      <functionDefinition
+        name="turnOffLights"
+        parameters={{ type: 'object', properties: { room: { type: 'string', enum: ['bedroom', 'kitchen'] } } }}
+      >
+        Turns off the lights in a room.
+      </functionDefinition>
+      <user>Turn off the lights in the bedroom and the kitchen.</user>
+    </>
+  );
+  const functionCalls = ctx.render(<OpenAIChatModel model="gpt-3.5-turbo">{prompt}</OpenAIChatModel>);
+  const isFunctionCall = (node: RenderNode): node is RenderElement<'functionCall'> =>
+    typeof node === 'object' && node.type === 'functionCall';
+
+  let messages = 0;
+  const allParsed: Array<{ room: string }> = [];
+  const functionResponses: Array<AINode> = [];
+
+  for await (const node of functionCalls.flat(isChatElement)) {
+    if (node.type === 'assistant') {
+      continue;
+    }
+    ++messages;
+    expect(node.type).toBe('functionCall');
+    expect(node.attributes.name).toBe('turnOffLights');
+    const parsed = JSON.parse(await node.text());
+    expect([{ room: 'bedroom' }, { room: 'kitchen' }]).toContainEqual(parsed);
+    expect(allParsed).not.toContainEqual(parsed);
+    allParsed.push(parsed);
+    functionResponses.push(
+      <functionResponse id={node.attributes.id} name={node.attributes.name}>
+        OK
+      </functionResponse>,
+    );
+  }
+
+  expect(messages).toBe(2);
+
+  const synthesis = ctx.render(
+    <OpenAIChatModel model="gpt-3.5-turbo">
+      {prompt}
+      {functionCalls.flat(isFunctionCall)}
+      {functionResponses}
+    </OpenAIChatModel>,
+  );
+  messages = 0;
+  for await (const node of synthesis.flat(isChatElement)) {
+    ++messages;
+    expect(node.type).toBe('assistant');
+  }
+  expect(messages).toBe(1);
+
+  // It should also work properly if there's an assistant message in between.
+  const synthesis2 = ctx.render(
+    <OpenAIChatModel model="gpt-3.5-turbo">
+      {prompt}
+      <assistant>Okay, let me do that for you.</assistant>
+      {functionCalls.flat(isFunctionCall)}
+      {functionResponses}
+    </OpenAIChatModel>,
+  );
+  for await (const node of synthesis2.flat(isChatElement)) {
+    expect(node.type).toBe('assistant');
+  }
 });
 
 it('handles images', { timeout: 10000 }, async () => {
