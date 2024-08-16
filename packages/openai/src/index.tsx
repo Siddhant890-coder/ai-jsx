@@ -296,6 +296,7 @@ export async function* OpenAIChatModel(
         name: m.attributes.name,
         description: m.toString(),
         parameters: m.attributes.parameters as unknown as OpenAI.FunctionParameters,
+        strict: 'strict' in m.attributes ? Boolean(m.attributes.strict) : undefined,
       },
       type: 'function',
     }));

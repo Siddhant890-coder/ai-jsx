@@ -103,6 +103,51 @@ it('handles function synthesis', async () => {
   expect(accumulated).toMatch(result.toString());
 });
 
+it('handles strict functions', { timeout: 10000 }, async () => {
+  const ctx = createRenderContext();
+  const result = ctx.render(
+    <OpenAIChatModel model="gpt-3.5-turbo">
+      <functionDefinition
+        name="turnOffLights"
+        parameters={{
+          type: 'object',
+          properties: { room: { type: 'string', enum: ['bedroom', 'kitchen'] } },
+          additionalProperties: false,
+          required: ['room'],
+        }}
+        strict
+      >
+        Turns off the lights in a room.
+      </functionDefinition>
+      <user>Turn off the lights in the bedroom.</user>
+      <functionCall id="1" name="turnOffLights">
+        {JSON.stringify({ room: 'bedroom' })}
+      </functionCall>
+      <functionResponse id="1" name="turnOffLights">
+        OK
+      </functionResponse>
+    </OpenAIChatModel>,
+  );
+
+  let messages = 0;
+  let accumulated = '';
+  for await (const node of result.flat(isChatElement)) {
+    ++messages;
+    expect(node.type).toBe('assistant');
+
+    let chunks = 0;
+    for await (const chunk of node.text()) {
+      ++chunks;
+      accumulated += chunk;
+    }
+
+    expect(chunks).toBeGreaterThan(1);
+  }
+
+  expect(messages).toBe(1);
+  expect(accumulated).toMatch(result.toString());
+});
+
 it('handles multiple concurrent function calls', async () => {
   const ctx = createRenderContext();
   const prompt = (
