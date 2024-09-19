@@ -1,6 +1,6 @@
 {
   "name": "@ai-jsx/openai",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "main": "./dist/commonjs/index.js",
   "exports": {

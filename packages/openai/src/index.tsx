@@ -26,21 +26,24 @@ const cachedEncodings = new Map<string, Tiktoken>();
 cachedEncodings.set('cl100k_base', getEncoding('cl100k_base'));
 cachedEncodings.set('o200k_base', getEncoding('o200k_base'));
 
-function userMessageParts(message: RenderElement<'user'>): (string | RenderElement<'image'>)[] {
-  const chunks: (string | RenderElement<'image'>)[] = [];
+function userMessageParts(
+  message: RenderElement<'user'>,
+): (string | RenderElement<'image'> | RenderElement<'audio'>)[] {
+  const chunks: (string | RenderElement<'image'> | RenderElement<'audio'>)[] = [];
 
-  for (const textOrImage of message.flat(
-    (n): n is string | RenderElement<'image'> => typeof n === 'string' || n.type === 'image',
+  for (const textOrImageOrAudio of message.flat(
+    (n): n is string | RenderElement<'image'> | RenderElement<'audio'> =>
+      typeof n === 'string' || n.type === 'image' || n.type === 'audio',
   )) {
-    if (typeof textOrImage === 'object') {
-      chunks.push(textOrImage);
+    if (typeof textOrImageOrAudio === 'object') {
+      chunks.push(textOrImageOrAudio);
       continue;
     }
     const currentChunk = chunks.at(-1);
     if (typeof currentChunk !== 'string') {
-      chunks.push(textOrImage);
+      chunks.push(textOrImageOrAudio);
     } else {
-      chunks[chunks.length - 1] = currentChunk + textOrImage;
+      chunks[chunks.length - 1] = currentChunk + textOrImageOrAudio;
     }
   }
 
@@ -231,7 +234,12 @@ export async function* OpenAIChatModel(
           const chunks: OpenAI.Chat.ChatCompletionContentPart[] = userMessageParts(message).map((part) =>
             typeof part === 'string'
               ? { type: 'text', text: part }
-              : { type: 'image_url', image_url: { url: part.attributes.src, detail: part.attributes.detail } },
+              : part.type === 'audio'
+                ? ({
+                    type: 'audio_url',
+                    audio_url: { url: part.attributes.src },
+                  } as unknown as OpenAI.Chat.ChatCompletionContentPart)
+                : { type: 'image_url', image_url: { url: part.attributes.src, detail: part.attributes.detail } },
           );
           return {
             role: message.type,
